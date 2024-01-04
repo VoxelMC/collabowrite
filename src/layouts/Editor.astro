@@ -1,0 +1,12 @@
+---import { EditorPane } from '../components/preact/EditorPane';
+
+interface Props {
+    state: 'editor' | 'renderer' | 'both';
+}
+const { state } = Astro.props;
+---
+
+{
+    // Editor Pane
+}
+<EditorPane />
