@@ -1,12 +1,14 @@
----import { EditorPane } from '../components/preact/EditorPane';
+---
+import EditorPane from '../components/qwik/EditorPane';
 
 interface Props {
     state: 'editor' | 'renderer' | 'both';
+	url: string;
 }
-const { state } = Astro.props;
+const { state, url } = Astro.props;
 ---
 
-{
-    // Editor Pane
-}
-<EditorPane />
+{/* Editor Pane  */}
+<div class="h-full w-full bg-white px-8 py-4">
+    <EditorPane {url} />
+</div>
