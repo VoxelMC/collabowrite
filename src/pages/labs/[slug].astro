@@ -1,0 +1,30 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Editor from '../../layouts/Editor.astro';
+import Navbar from '../../components/astro/Navbar.astro';
+import supabase from '~/supabase/client';
+
+const { slug } = Astro.params;
+// const documents = await supabase.from('test').select('created_at');
+// const data = documents.data?.map(({ created_at }) => created_at );
+const documents = await supabase.from('document').select('uuid');
+const data: string[] = documents.data?.map(({ uuid }) => uuid ) as [];
+console.log(data)
+// if (documents.error || !slug) {
+// 	return Astro.redirect('/404')
+// }
+// if (!data!.includes(slug)){
+// 	return Astro.redirect("/404")
+// }
+console.log(documents);
+---
+
+<Layout title="Welcome to Astro.">
+	<main>
+		<section class="grid h-screen grid-cols-1 grid-rows-[1fr,15fr]">
+			<Navbar />
+			<Editor url={slug as string} state="editor" />
+		</section>
+	</main>
+</Layout>
+

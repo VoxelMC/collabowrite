@@ -5,14 +5,13 @@ import {
 	useStore,
 	noSerialize,
 	useSignal,
+	useTask$,
 } from '@builder.io/qwik';
-
-import { Socket, io } from 'socket.io-client';
-import supabase from '~/supabase/client';
+import { isServer } from '@builder.io/qwik/build';
 
 import * as Y from 'yjs';
+import YPartyKitProvider from 'y-partykit/provider';
 import { yCollab } from 'y-codemirror.next';
-import { SocketIOProvider } from './util/provider';
 import * as random from 'lib0/random';
 
 import { EditorView, basicSetup } from 'codemirror';
@@ -27,14 +26,10 @@ import {
 	// receiveUpdates,
 } from '@codemirror/collab';
 
-// import {
-// 	peerExtension,
-// 	EditorConnection,
-// 	getDocument,
-// } from '~/util/peerExtension';
-
 import * as IncrementalDOM from 'incremental-dom';
 import MarkdownIt from 'markdown-it';
+
+// @ts-ignore-warn
 import MarkdownItIncrementalDOM from 'markdown-it-incremental-dom';
 import type { YText } from 'node_modules/yjs/dist/src/types/YText';
 import { EditorState } from '@codemirror/state';
@@ -47,11 +42,12 @@ interface Store {
 	md?: MarkdownIt;
 	updates: Update[];
 	ydoc?: Y.Doc;
-	provider?: SocketIOProvider;
+	provider?: YPartyKitProvider;
 	undoManager?: Y.UndoManager;
 }
 
 export default component$(({ url }: ItemProps) => {
+	const wsUrl = import.meta.env.DEV && process.env.TESTING !== "1" ? 'localhost:49414' : import.meta.env.PARTYKIT_URL;
 	const usercolors = [
 		{ color: '#30bced', light: '#30bced33' },
 		{ color: '#6eeb83', light: '#6eeb8333' },
@@ -66,8 +62,8 @@ export default component$(({ url }: ItemProps) => {
 	const userColor: { color: string; light: string } =
 		usercolors[random.uint32() % usercolors.length];
 
-	// const ioSocket = useSignal<Socket>();
 	const editorRef = useSignal<HTMLElement>();
+	const codeMirrorRef = useSignal<EditorView>();
 	const displayRef = useSignal<HTMLElement>();
 	const store = useStore<Store>({
 		md: undefined,
@@ -77,13 +73,8 @@ export default component$(({ url }: ItemProps) => {
 	});
 
 	const currentValue = useSignal<string>();
-	const startingValue = '# Hello, Incremental DOM!';
 
-	// const socketUrl = url.replace(/^http/, 'ws');
-	// const socketUrl = 'ws://localhost:3000/test';
-	// const socketUrl = url.replace(/^http/, 'http') + "/socket";
-
-	const test = $((update: ViewUpdate) => {
+	const processEditorUpdate = $((update: ViewUpdate) => {
 		const value = update.state.doc.toString();
 		if (value !== currentValue.value) {
 			IncrementalDOM.patch(
@@ -95,14 +86,38 @@ export default component$(({ url }: ItemProps) => {
 		}
 	});
 
+	useTask$(({ track }) => {
+		track(() => codeMirrorRef.value);
+		if (isServer) {
+			return; // Server guard
+		}
+
+		if (currentValue.value === '') {
+			const arr = Array.from(document.querySelectorAll('.cm-line'))
+				.map(e => e.textContent)
+				.join('\n');
+			IncrementalDOM.patch(
+				displayRef.value as HTMLElement,
+				// @ts-ignore
+				store.md.renderToIncrementalDOM(arr)
+			);
+		}
+	});
+
 	useVisibleTask$(async () => {
 		store.ydoc = noSerialize(new Y.Doc());
 		store.provider = noSerialize(
-			new SocketIOProvider(
-				'ws://10.0.0.37:3000',
-				'test-room',
+			new YPartyKitProvider(
+				// 'ws://10.0.0.37:49414',
+				wsUrl,
+				url,
 				store.ydoc,
-				{ autoConnect: true }
+				{
+					params: async () => ({
+						token: 'TOKEN',
+						userId: 'test-user',
+					}),
+				}
 			)
 		);
 
@@ -130,40 +145,41 @@ export default component$(({ url }: ItemProps) => {
 			colorLight: userColor.light,
 		});
 
-		// let { version, doc } = await getDocument(new EditorConnection(ioSocket?.value as Socket));
-
 		const state = EditorState.create({
 			doc: ytext?.toString(),
 			extensions: [
 				basicSetup,
-				EditorView.updateListener.of(test),
+				EditorView.updateListener.of(processEditorUpdate),
 				EditorView.theme({
 					'&': { height: '100%' },
 					'.cm-scroller': { overflow: 'auto' },
 				}),
 				markdown({ codeLanguages: languages }),
 				EditorView.lineWrapping,
-				yCollab(ytext, store.provider, {
+				yCollab(ytext, store.provider?.awareness, {
 					undoManager: store.undoManager,
 				}),
-				// peerExtension(0, new EditorConnection(ioSocket?.value as Socket))
 			],
 		});
 
-		new EditorView({
-			state,
-			parent: editorRef.value as HTMLElement,
-		});
+		codeMirrorRef.value = noSerialize(
+			new EditorView({
+				state,
+				parent: editorRef.value as HTMLElement,
+			})
+		);
+		codeMirrorRef.value?.focus();
+		codeMirrorRef.value?.dispatch(state.update());
 	});
 
 	return (
-		<section class="flex h-[50vh] flex-row justify-between">
+		<section class="flex h-[80vh] flex-row justify-between">
 			<div
-				class="output prose prose-stone h-full w-[49%] border border-black"
+				class="output prose prose-stone h-full w-[49.5%] max-w-none border border-black bg-white"
 				ref={editorRef}
 			></div>
 			<div
-				class="output prose prose-stone w-[49%] border border-black px-4 py-2"
+				class="output prose prose-stone w-[49.5%] max-w-none overflow-y-scroll text-wrap border border-black bg-white px-4 py-2 leading-normal prose-headings:mb-3 prose-h1:text-4xl prose-h2:mb-2 prose-h2:mt-4 prose-h2:text-3xl prose-h3:mt-4 prose-h3:text-2xl prose-h4:mt-4 prose-h4:text-xl prose-h5:mt-4 prose-h5:text-lg prose-h6:mt-4 prose-p:my-2"
 				ref={displayRef}
 			></div>
 		</section>

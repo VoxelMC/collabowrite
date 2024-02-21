@@ -1,14 +1,24 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Editor from '../layouts/Editor.astro';
 import Navbar from '../components/astro/Navbar.astro';
+import { type Config, uniqueNamesGenerator, adjectives, colors, animals } from 'unique-names-generator';
+
+const nameConfig: Config = {
+  dictionaries: [adjectives, colors],
+  separator: '-',
+  length: 2,
+};
+
+const shortName = uniqueNamesGenerator(nameConfig);
+console.log(shortName)
+return Astro.redirect(`/labs/${shortName}/`);
 ---
 
 <Layout title="Welcome to Astro.">
     <main>
         <section class="grid h-screen grid-cols-1 grid-rows-[1fr,15fr]">
             <Navbar />
-            <Editor url={Astro.url.href} state="editor" />
+            <!-- <Editor url={Astro.url.href} state="editor" /> -->
         </section>
     </main>
 </Layout>
