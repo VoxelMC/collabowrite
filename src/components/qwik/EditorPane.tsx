@@ -47,7 +47,10 @@ interface Store {
 }
 
 export default component$(({ url }: ItemProps) => {
-	const wsUrl = import.meta.env.DEV && process.env.TESTING !== "1" ? 'localhost:49414' : import.meta.env.PARTYKIT_URL;
+	const wsUrl =
+		import.meta.env.DEV && process.env.TESTING !== '1' ?
+			'localhost:49414'
+			: import.meta.env.PARTYKIT_URL;
 	const usercolors = [
 		{ color: '#30bced', light: '#30bced33' },
 		{ color: '#6eeb83', light: '#6eeb8333' },
@@ -93,8 +96,17 @@ export default component$(({ url }: ItemProps) => {
 		}
 
 		if (currentValue.value === '') {
+			const multiplayerNames: Element[] = Array.from(
+				document.querySelectorAll('.cm-ySelectionInfo')
+			);
 			const arr = Array.from(document.querySelectorAll('.cm-line'))
-				.map(e => e.textContent)
+				.map(e => {
+					let out = e.textContent as string;
+					for (let name of multiplayerNames) {
+						out = out.replaceAll(name.textContent as string, '');
+					}
+					return out;
+				})
 				.join('\n');
 			IncrementalDOM.patch(
 				displayRef.value as HTMLElement,

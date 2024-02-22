@@ -8,8 +8,8 @@ const { slug } = Astro.params;
 // const documents = await supabase.from('test').select('created_at');
 // const data = documents.data?.map(({ created_at }) => created_at );
 const documents = await supabase.from('document').select('uuid');
-const data: string[] = documents.data?.map(({ uuid }) => uuid ) as [];
-console.log(data)
+const data: string[] = documents.data?.map(({ uuid }) => uuid) as [];
+console.log(data);
 // if (documents.error || !slug) {
 // 	return Astro.redirect('/404')
 // }
@@ -28,3 +28,8 @@ console.log(documents);
 	</main>
 </Layout>
 
+<style is:global>
+	.prose *:first-child {
+		@apply mt-0;
+	}
+</style>
