@@ -125,11 +125,11 @@ export default component$(({ url }: ItemProps) => {
 		}
 	});
 
-	useVisibleTask$(
+	useTask$(
 		({ cleanup }) => {
-			if (isServer) {
-				return; // Server guard
-			}
+			// if (isServer) {
+			// 	return; // Server guard
+			// }
 			console.log(wsUrl);
 			store.ydoc = noSerialize(new Y.Doc());
 			store.provider = noSerialize(
@@ -188,7 +188,7 @@ export default component$(({ url }: ItemProps) => {
 			codeMirrorRef.value?.dispatch(state.update());
 			cleanup(() => { });
 		},
-		{ strategy: 'document-ready' }
+		{ eagerness: 'load' }
 	);
 
 	return (
