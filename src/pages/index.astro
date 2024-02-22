@@ -10,7 +10,6 @@ const nameConfig: Config = {
 };
 
 const shortName = uniqueNamesGenerator(nameConfig);
-console.log(shortName)
 return Astro.redirect(`/labs/${shortName}/`);
 ---
 

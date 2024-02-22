@@ -49,10 +49,8 @@ interface Store {
 }
 
 export default component$(({ url }: ItemProps) => {
-	const wsUrl =
-		import.meta.env.DEV && process.env.TESTING !== '1' ?
-			'localhost:49414'
-			: import.meta.env.PARTYKIT_URL;
+	const wsUrl = useSignal<string>();
+
 	const usercolors = [
 		{ color: '#30bced', light: '#30bced33' },
 		{ color: '#6eeb83', light: '#6eeb8333' },
@@ -91,6 +89,15 @@ export default component$(({ url }: ItemProps) => {
 		}
 	});
 
+	useTask$(() => {
+		if (isServer) {
+			wsUrl.value =
+				import.meta.env.DEV && process.env.TESTING !== '1' ?
+					'localhost:49414'
+					: import.meta.env.PARTYKIT_URL;
+		}
+	});
+
 	useTask$(({ track }) => {
 		track(() => codeMirrorRef.value);
 		if (isServer) {
@@ -119,26 +126,16 @@ export default component$(({ url }: ItemProps) => {
 	});
 
 	useVisibleTask$(async () => {
-		console.log(wsUrl)
+		console.log(wsUrl);
 		store.ydoc = noSerialize(new Y.Doc());
 		store.provider = noSerialize(
-			new YPartyKitProvider(
-				// 'ws://10.0.0.37:49414',
-				wsUrl,
-				url,
-				store.ydoc,
-				{
-					params: async () => ({
-						token: 'TOKEN',
-						userId: 'test-user',
-					}),
-				}
-			)
+			new YPartyKitProvider(wsUrl.value as string, url, store.ydoc, {
+				params: async () => ({
+					token: 'TOKEN',
+					userId: 'test-user',
+				}),
+			})
 		);
-
-		store.provider?.once('connected', () => {
-			console.log('connecter');
-		});
 
 		const ytext = store.ydoc?.getText('codemirror');
 		currentValue.value = ytext?.toJSON();
@@ -155,7 +152,7 @@ export default component$(({ url }: ItemProps) => {
 		store.undoManager = noSerialize(new Y.UndoManager(ytext as YText));
 
 		store?.provider?.awareness.setLocalStateField('user', {
-			name: 'Anonymous ' + Math.floor(Math.random() * 100),
+			name: 'User ' + Math.floor(Math.random() * 100),
 			color: userColor.color,
 			colorLight: userColor.light,
 		});

@@ -9,14 +9,14 @@ const { slug } = Astro.params;
 // const data = documents.data?.map(({ created_at }) => created_at );
 const documents = await supabase.from('document').select('uuid');
 const data: string[] = documents.data?.map(({ uuid }) => uuid) as [];
-console.log(data);
+// console.log(data);
 // if (documents.error || !slug) {
 // 	return Astro.redirect('/404')
 // }
 // if (!data!.includes(slug)){
 // 	return Astro.redirect("/404")
 // }
-console.log(documents);
+// console.log(documents);
 ---
 
 <Layout title="Welcome to Astro.">

@@ -10,19 +10,19 @@ dependencies:
     version: 0.5.5(prettier-plugin-astro@0.12.3)(prettier@3.2.5)(typescript@5.3.3)
   '@astrojs/node':
     specifier: ^8.2.0
-    version: 8.2.0(astro@4.4.1)
+    version: 8.2.0(astro@4.4.2)
   '@astrojs/preact':
     specifier: ^3.1.0
     version: 3.1.0(@babel/core@7.23.9)(preact@10.19.5)(vite@5.1.3)
   '@astrojs/svelte':
     specifier: ^5.0.3
-    version: 5.0.3(astro@4.4.1)(svelte@4.2.11)(typescript@5.3.3)(vite@5.1.3)
+    version: 5.0.3(astro@4.4.2)(svelte@4.2.11)(typescript@5.3.3)(vite@5.1.3)
   '@astrojs/tailwind':
     specifier: ^5.1.0
-    version: 5.1.0(astro@4.4.1)(tailwindcss@3.4.1)
+    version: 5.1.0(astro@4.4.2)(tailwindcss@3.4.1)
   '@astrojs/vercel':
     specifier: ^7.3.1
-    version: 7.3.1(astro@4.4.1)
+    version: 7.3.1(astro@4.4.2)
   '@builder.io/qwik':
     specifier: ^1.4.5
     version: 1.4.5(undici@6.6.2)
@@ -49,7 +49,7 @@ dependencies:
     version: 1.2.2(preact@10.19.5)
   '@qwikdev/astro':
     specifier: ^0.5.7
-    version: 0.5.7(@builder.io/qwik@1.4.5)(astro@4.4.1)(typescript@5.3.3)(vite@5.1.3)
+    version: 0.5.7(@builder.io/qwik@1.4.5)(astro@4.4.2)(typescript@5.3.3)(vite@5.1.3)
   '@supabase/supabase-js':
     specifier: ^2.39.7
     version: 2.39.7
@@ -63,8 +63,8 @@ dependencies:
     specifier: ^8.5.10
     version: 8.5.10
   astro:
-    specifier: ^4.4.1
-    version: 4.4.1(typescript@5.3.3)
+    specifier: ^4.4.2
+    version: 4.4.2(typescript@5.3.3)
   codemirror:
     specifier: ^6.0.1
     version: 6.0.1(@lezer/common@1.2.1)
@@ -235,12 +235,12 @@ packages:
       - supports-color
     dev: false
 
-  /@astrojs/node@8.2.0(astro@4.4.1):
+  /@astrojs/node@8.2.0(astro@4.4.2):
     resolution: {integrity: sha512-keQIPvdx8hquG+KnWoJp7io/GoczBEJer9X8WzPHK2fnVRXYDKGzXWZw3Dbg0ZhXJreVV3xzniN7nr6e7hgDXg==}
     peerDependencies:
       astro: ^4.2.0
     dependencies:
-      astro: 4.4.1(typescript@5.3.3)
+      astro: 4.4.2(typescript@5.3.3)
       send: 0.18.0
       server-destroy: 1.0.1
     transitivePeerDependencies:
@@ -274,7 +274,7 @@ packages:
       prismjs: 1.29.0
     dev: false
 
-  /@astrojs/svelte@5.0.3(astro@4.4.1)(svelte@4.2.11)(typescript@5.3.3)(vite@5.1.3):
+  /@astrojs/svelte@5.0.3(astro@4.4.2)(svelte@4.2.11)(typescript@5.3.3)(vite@5.1.3):
     resolution: {integrity: sha512-6TUBRUxmsEczKPBT6oDUAfvzuFCmITuhZfKPT5ZtOOyj9XOVnEnj/Iobd3ajKUbpWNYX7qZVAd1KMkmJc1Nhsg==}
     engines: {node: '>=18.14.1'}
     peerDependencies:
@@ -282,7 +282,7 @@ packages:
       svelte: ^4.0.0 || ^5.0.0-next.1
     dependencies:
       '@sveltejs/vite-plugin-svelte': 3.0.2(svelte@4.2.11)(vite@5.1.3)
-      astro: 4.4.1(typescript@5.3.3)
+      astro: 4.4.2(typescript@5.3.3)
       svelte: 4.2.11
       svelte2tsx: 0.6.27(svelte@4.2.11)(typescript@5.3.3)
     transitivePeerDependencies:
@@ -291,13 +291,13 @@ packages:
       - vite
     dev: false
 
-  /@astrojs/tailwind@5.1.0(astro@4.4.1)(tailwindcss@3.4.1):
+  /@astrojs/tailwind@5.1.0(astro@4.4.2)(tailwindcss@3.4.1):
     resolution: {integrity: sha512-BJoCDKuWhU9FT2qYg+fr6Nfb3qP4ShtyjXGHKA/4mHN94z7BGcmauQK23iy+YH5qWvTnhqkd6mQPQ1yTZTe9Ig==}
     peerDependencies:
       astro: ^3.0.0 || ^4.0.0
       tailwindcss: ^3.0.24
     dependencies:
-      astro: 4.4.1(typescript@5.3.3)
+      astro: 4.4.2(typescript@5.3.3)
       autoprefixer: 10.4.17(postcss@8.4.35)
       postcss: 8.4.35
       postcss-load-config: 4.0.2(postcss@8.4.35)
@@ -321,7 +321,7 @@ packages:
       - supports-color
     dev: false
 
-  /@astrojs/vercel@7.3.1(astro@4.4.1):
+  /@astrojs/vercel@7.3.1(astro@4.4.2):
     resolution: {integrity: sha512-nzpvuRIJMbmLXd0nQpVrOGCPOEx792aAI25aFNK3uC0lD/yGyAlY4nHkCeaE/c+0vkiRdCbfGlHujz3emWpg2w==}
     peerDependencies:
       astro: ^4.2.0
@@ -329,7 +329,7 @@ packages:
       '@astrojs/internal-helpers': 0.2.1
       '@vercel/analytics': 1.2.2
       '@vercel/nft': 0.24.4
-      astro: 4.4.1(typescript@5.3.3)
+      astro: 4.4.2(typescript@5.3.3)
       esbuild: 0.19.12
       fast-glob: 3.3.2
       set-cookie-parser: 2.6.0
@@ -1423,14 +1423,14 @@ packages:
       - supports-color
     dev: false
 
-  /@qwikdev/astro@0.5.7(@builder.io/qwik@1.4.5)(astro@4.4.1)(typescript@5.3.3)(vite@5.1.3):
+  /@qwikdev/astro@0.5.7(@builder.io/qwik@1.4.5)(astro@4.4.2)(typescript@5.3.3)(vite@5.1.3):
     resolution: {integrity: sha512-EftMvEaVTd8gt8K6sz3RnULUaPtME2ayVKz7TE4UzSUZYL5HSAfraA/hzEkNGX2Odl+XvcZFMVhweEiV+4HfyA==}
     peerDependencies:
       '@builder.io/qwik': ^1.4.2
       typescript: ^5.3.2
     dependencies:
       '@builder.io/qwik': 1.4.5(undici@6.6.2)
-      astro-integration-kit: 0.2.1(astro@4.4.1)
+      astro-integration-kit: 0.2.1(astro@4.4.2)
       fs-extra: 11.2.0
       typescript: 5.3.3
       vite-tsconfig-paths: 4.3.1(typescript@5.3.3)(vite@5.1.3)
@@ -2002,17 +2002,17 @@ packages:
     resolution: {integrity: sha512-I1jXZMjAgCMmxT4qxXfPXa6SthSoE8h6gkSI9BGGNv8mP8G/v0blc+qFnZu6K42vTOiuME596QaLO0TP3Lk0xg==}
     dev: false
 
-  /astro-integration-kit@0.2.1(astro@4.4.1):
+  /astro-integration-kit@0.2.1(astro@4.4.2):
     resolution: {integrity: sha512-AWgFRvo3YSpFxVfDdhHRAkOR7KmNYrS7h4JCpOBgMtea6SrpARsmfZXXgFHF+nNFJxmIA//PYetkbB/HQGzutw==}
     peerDependencies:
       astro: ^4.0.0
     dependencies:
-      astro: 4.4.1(typescript@5.3.3)
+      astro: 4.4.2(typescript@5.3.3)
       pathe: 1.1.2
     dev: false
 
-  /astro@4.4.1(typescript@5.3.3):
-    resolution: {integrity: sha512-nJLgNg8UXKBJYXjWtekgv1TYZES++LAdShgyKL8L5yJMeiqlDSO+/Laq5VfRKoL9hzBdyolJMB0WDE/+bRZytg==}
+  /astro@4.4.2(typescript@5.3.3):
+    resolution: {integrity: sha512-r1djG61ABvZ9n73vaTW6nTKnMvWY1LQhPpBtzoA2OI2RAk/ptzsqK9ozkAG1qXO2bW3NLJi6pfMxxpngNAALyQ==}
     engines: {node: '>=18.14.1', npm: '>=6.14.0'}
     hasBin: true
     dependencies:
