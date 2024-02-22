@@ -105,32 +105,32 @@ export default component$(({ url }: ItemProps) => {
 			return; // Server guard
 		}
 
-		if (currentValue.value === '') {
-			const multiplayerNames: Element[] = Array.from(
-				document.querySelectorAll('.cm-ySelectionInfo')
-			);
-			const arr = Array.from(document.querySelectorAll('.cm-line'))
-				.map(e => {
-					let out = e.textContent as string;
-					for (let name of multiplayerNames) {
-						out = out.replaceAll(name.textContent as string, '');
-					}
-					return out;
-				})
-				.join('\n');
-			IncrementalDOM.patch(
-				displayRef.value as HTMLElement,
-				// @ts-ignore
-				store.md.renderToIncrementalDOM(arr)
-			);
-		}
+		// if (currentValue.value === '') {
+		// 	const multiplayerNames: Element[] = Array.from(
+		// 		document.querySelectorAll('.cm-ySelectionInfo')
+		// 	);
+		// 	const arr = Array.from(document.querySelectorAll('.cm-line'))
+		// 		.map(e => {
+		// 			let out = e.textContent as string;
+		// 			for (let name of multiplayerNames) {
+		// 				out = out.replaceAll(name.textContent as string, '');
+		// 			}
+		// 			return out;
+		// 		})
+		// 		.join('\n');
+		// 	IncrementalDOM.patch(
+		// 		displayRef.value as HTMLElement,
+		// 		// @ts-ignore
+		// 		store.md.renderToIncrementalDOM(arr)
+		// 	);
+		// }
 	});
 
-	useVisibleTask$(
-		({ cleanup }) => {
-			// useOnDocument(
-			// 	'load',
-			// 	$(() => {
+	// useVisibleTask$(
+	// 	({ cleanup }) => {
+	useOnDocument(
+		'load',
+		$(() => {
 			// if (isServer) {
 			// 	return; // Server guard
 			// }
@@ -191,7 +191,7 @@ export default component$(({ url }: ItemProps) => {
 			codeMirrorRef.value?.focus();
 			codeMirrorRef.value?.dispatch(state.update());
 			// cleanup(() => { });
-		}
+		})
 		// { strategy: 'document-ready' }
 	);
 
