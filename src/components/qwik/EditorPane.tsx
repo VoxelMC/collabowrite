@@ -125,67 +125,71 @@ export default component$(({ url }: ItemProps) => {
 		}
 	});
 
-	useTask$(() => {
-		if (isServer) {
-			return; // Server guard
-		}
-		console.log(wsUrl);
-		store.ydoc = noSerialize(new Y.Doc());
-		store.provider = noSerialize(
-			new YPartyKitProvider(wsUrl.value as string, url, store.ydoc, {
-				params: async () => ({
-					token: 'TOKEN',
-					userId: 'test-user',
-				}),
-			})
-		);
+	useVisibleTask$(
+		({ cleanup }) => {
+			if (isServer) {
+				return; // Server guard
+			}
+			console.log(wsUrl);
+			store.ydoc = noSerialize(new Y.Doc());
+			store.provider = noSerialize(
+				new YPartyKitProvider(wsUrl.value as string, url, store.ydoc, {
+					params: async () => ({
+						token: 'TOKEN',
+						userId: 'test-user',
+					}),
+				})
+			);
 
-		const ytext = store.ydoc?.getText('codemirror');
-		currentValue.value = ytext?.toJSON();
+			const ytext = store.ydoc?.getText('codemirror');
+			currentValue.value = ytext?.toJSON();
 
-		const md = new MarkdownIt();
-		md.use(MarkdownItIncrementalDOM, IncrementalDOM);
-		store.md = noSerialize(md);
-		IncrementalDOM.patch(
-			displayRef.value as HTMLElement,
-			// @ts-ignore
-			store.md.renderToIncrementalDOM(currentValue.value)
-		);
+			const md = new MarkdownIt();
+			md.use(MarkdownItIncrementalDOM, IncrementalDOM);
+			store.md = noSerialize(md);
+			IncrementalDOM.patch(
+				displayRef.value as HTMLElement,
+				// @ts-ignore
+				store.md.renderToIncrementalDOM(currentValue.value)
+			);
 
-		store.undoManager = noSerialize(new Y.UndoManager(ytext as YText));
+			store.undoManager = noSerialize(new Y.UndoManager(ytext as YText));
 
-		store?.provider?.awareness.setLocalStateField('user', {
-			name: 'User ' + Math.floor(Math.random() * 100),
-			color: userColor.color,
-			colorLight: userColor.light,
-		});
+			store?.provider?.awareness.setLocalStateField('user', {
+				name: 'User ' + Math.floor(Math.random() * 100),
+				color: userColor.color,
+				colorLight: userColor.light,
+			});
 
-		const state = EditorState.create({
-			doc: ytext?.toString(),
-			extensions: [
-				basicSetup,
-				EditorView.updateListener.of(processEditorUpdate),
-				EditorView.theme({
-					'&': { height: '100%' },
-					'.cm-scroller': { overflow: 'auto' },
-				}),
-				markdown({ codeLanguages: languages }),
-				EditorView.lineWrapping,
-				yCollab(ytext, store.provider?.awareness, {
-					undoManager: store.undoManager,
-				}),
-			],
-		});
+			const state = EditorState.create({
+				doc: ytext?.toString(),
+				extensions: [
+					basicSetup,
+					EditorView.updateListener.of(processEditorUpdate),
+					EditorView.theme({
+						'&': { height: '100%' },
+						'.cm-scroller': { overflow: 'auto' },
+					}),
+					markdown({ codeLanguages: languages }),
+					EditorView.lineWrapping,
+					yCollab(ytext, store.provider?.awareness, {
+						undoManager: store.undoManager,
+					}),
+				],
+			});
 
-		codeMirrorRef.value = noSerialize(
-			new EditorView({
-				state,
-				parent: editorRef.value as HTMLElement,
-			})
-		);
-		codeMirrorRef.value?.focus();
-		codeMirrorRef.value?.dispatch(state.update());
-	});
+			codeMirrorRef.value = noSerialize(
+				new EditorView({
+					state,
+					parent: editorRef.value as HTMLElement,
+				})
+			);
+			codeMirrorRef.value?.focus();
+			codeMirrorRef.value?.dispatch(state.update());
+			cleanup(() => { });
+		},
+		{ strategy: 'document-ready' }
+	);
 
 	return (
 		<section class="flex h-[80vh] flex-row justify-between">
