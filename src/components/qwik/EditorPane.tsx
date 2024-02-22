@@ -135,10 +135,6 @@ export default component$(({ url }: ItemProps) => {
 	useOnDocument(
 		'DOMContentLoaded',
 		$(async () => {
-			// if (isServer) {
-			// 	return; // Server guard
-			// }
-			console.log(wsUrl);
 			store.ydoc = noSerialize(new Y.Doc());
 			store.provider = noSerialize(
 				new YPartyKitProvider(wsUrl.value as string, url, store.ydoc, {
@@ -154,15 +150,9 @@ export default component$(({ url }: ItemProps) => {
 
 			const md = new MarkdownIt();
 			md.use(MarkdownItIncrementalDOM, IncrementalDOM);
+
 			store.md = noSerialize(md);
-			// IncrementalDOM.patch(
-			// 	displayRef.value as HTMLElement,
-			// 	// @ts-ignore
-			// 	store.md.renderToIncrementalDOM(currentValue.value)
-			// );
-
 			store.undoManager = noSerialize(new Y.UndoManager(ytext as YText));
-
 			store?.provider?.awareness.setLocalStateField('user', {
 				name: 'User ' + Math.floor(Math.random() * 100),
 				color: userColor.color,
@@ -196,9 +186,7 @@ export default component$(({ url }: ItemProps) => {
 				})
 			);
 			codeMirrorRef.value?.focus();
-			// cleanup(() => { });
 		})
-		// { strategy: 'document-ready' }
 	);
 
 	return (
