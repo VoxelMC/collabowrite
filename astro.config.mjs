@@ -10,5 +10,6 @@ import vercel from '@astrojs/vercel/serverless';
 export default defineConfig({
 	integrations: [tailwind(), qwikdev()],
 	output: 'server',
-	adapter: vercel(),
+	// adapter: vercel(),
+	adapter: node({ mode: 'standalone' }),
 });

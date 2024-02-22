@@ -127,11 +127,14 @@ export default component$(({ url }: ItemProps) => {
 	});
 
 	const state = useSignal<EditorState>();
+	// const languagesData = useSignal<typeof languages>();
+	// languagesData.value = languages;
+	const languagesData = $(() => languages);
 	// useVisibleTask$(
 	// 	({ cleanup }) => {
 	useOnDocument(
 		'DOMContentLoaded',
-		$(() => {
+		$(async () => {
 			// if (isServer) {
 			// 	return; // Server guard
 			// }
@@ -139,7 +142,7 @@ export default component$(({ url }: ItemProps) => {
 			store.ydoc = noSerialize(new Y.Doc());
 			store.provider = noSerialize(
 				new YPartyKitProvider(wsUrl.value as string, url, store.ydoc, {
-					params: async () => ({
+					params: () => ({
 						token: 'TOKEN',
 						userId: 'test-user',
 					}),
@@ -147,7 +150,7 @@ export default component$(({ url }: ItemProps) => {
 			);
 
 			const ytext = store.ydoc?.getText('codemirror');
-			currentValue.value = ytext?.toJSON();
+			// currentValue.value = ytext?.toJSON();
 
 			const md = new MarkdownIt();
 			md.use(MarkdownItIncrementalDOM, IncrementalDOM);
@@ -176,7 +179,8 @@ export default component$(({ url }: ItemProps) => {
 							'&': { height: '100%' },
 							'.cm-scroller': { overflow: 'auto' },
 						}),
-						markdown({ codeLanguages: languages }),
+						markdown({ codeLanguages: await languagesData() }),
+						// markdown(),
 						EditorView.lineWrapping,
 						yCollab(ytext, store.provider?.awareness, {
 							undoManager: store.undoManager,
@@ -192,9 +196,6 @@ export default component$(({ url }: ItemProps) => {
 				})
 			);
 			codeMirrorRef.value?.focus();
-			codeMirrorRef.value?.dispatch(
-				(state.value as EditorState).update()
-			);
 			// cleanup(() => { });
 		})
 		// { strategy: 'document-ready' }

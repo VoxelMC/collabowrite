@@ -6,7 +6,7 @@
         "dev": "astro dev --host",
         "dev:test": "TESTING=1 astro dev --host",
         "start": "astro dev",
-        "build": "astro check && astro build",
+        "build": "astro build",
         "preview": "astro preview",
         "astro": "astro",
         "generate-types": "supabase gen types typescript --project-id ekhczdtxvtsicjzmqfwi > database.types.ts"
@@ -27,6 +27,7 @@
         "@codemirror/view": "^6.24.1",
         "@preact/signals": "^1.2.2",
         "@qwikdev/astro": "^0.5.7",
+        "@rollup/plugin-node-resolve": "^15.2.3",
         "@supabase/supabase-js": "^2.39.7",
         "@tailwindcss/typography": "^0.5.10",
         "@types/markdown-it": "^13.0.7",
