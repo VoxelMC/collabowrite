@@ -1,12 +1,18 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/astro/Navbar.astro';
-import { type Config, uniqueNamesGenerator, adjectives, colors, animals } from 'unique-names-generator';
+import {
+    type Config,
+    uniqueNamesGenerator,
+    adjectives,
+    colors,
+    animals,
+} from 'unique-names-generator';
 
 const nameConfig: Config = {
-  dictionaries: [adjectives, colors],
-  separator: '-',
-  length: 2,
+    dictionaries: [adjectives, colors],
+    separator: '-',
+    length: 2,
 };
 
 const shortName = uniqueNamesGenerator(nameConfig);

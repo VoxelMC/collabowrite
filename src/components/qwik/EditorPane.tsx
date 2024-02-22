@@ -142,11 +142,7 @@ export default component$(({ url }: ItemProps) => {
     });
 
     const state = useSignal<EditorState>();
-    // const languagesData = useSignal<typeof languages>();
-    // languagesData.value = languages;
     const languagesData = $(() => languages);
-    // useVisibleTask$(
-    // 	({ cleanup }) => {
 
     useOnDocument(
         'DOMContentLoaded',
