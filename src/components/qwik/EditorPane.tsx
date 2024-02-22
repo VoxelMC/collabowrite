@@ -152,7 +152,7 @@ export default component$(({ url }: ItemProps) => {
 	useOnDocument(
 		'DOMContentLoaded',
 		$(async () => {
-			if (initData?.value?.error) {
+			if (initData?.value?.error || initData?.value?.data.length === 0) {
 				store.ydoc = noSerialize(new Y.Doc());
 			} else {
 				store.ydoc = noSerialize(
