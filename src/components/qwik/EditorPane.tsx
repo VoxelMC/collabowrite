@@ -125,7 +125,7 @@ export default component$(({ url }: ItemProps) => {
 		}
 	});
 
-	useVisibleTask$(async () => {
+	useVisibleTask$(() => {
 		console.log(wsUrl);
 		store.ydoc = noSerialize(new Y.Doc());
 		store.provider = noSerialize(
