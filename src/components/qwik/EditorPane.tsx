@@ -126,6 +126,7 @@ export default component$(({ url }: ItemProps) => {
 		}
 	});
 
+	const state = useSignal<EditorState>();
 	// useVisibleTask$(
 	// 	({ cleanup }) => {
 	useOnDocument(
@@ -151,11 +152,11 @@ export default component$(({ url }: ItemProps) => {
 			const md = new MarkdownIt();
 			md.use(MarkdownItIncrementalDOM, IncrementalDOM);
 			store.md = noSerialize(md);
-			IncrementalDOM.patch(
-				displayRef.value as HTMLElement,
-				// @ts-ignore
-				store.md.renderToIncrementalDOM(currentValue.value)
-			);
+			// IncrementalDOM.patch(
+			// 	displayRef.value as HTMLElement,
+			// 	// @ts-ignore
+			// 	store.md.renderToIncrementalDOM(currentValue.value)
+			// );
 
 			store.undoManager = noSerialize(new Y.UndoManager(ytext as YText));
 
@@ -165,31 +166,35 @@ export default component$(({ url }: ItemProps) => {
 				colorLight: userColor.light,
 			});
 
-			const state = EditorState.create({
-				doc: ytext?.toString(),
-				extensions: [
-					basicSetup,
-					EditorView.updateListener.of(processEditorUpdate),
-					EditorView.theme({
-						'&': { height: '100%' },
-						'.cm-scroller': { overflow: 'auto' },
-					}),
-					markdown({ codeLanguages: languages }),
-					EditorView.lineWrapping,
-					yCollab(ytext, store.provider?.awareness, {
-						undoManager: store.undoManager,
-					}),
-				],
-			});
+			state.value = noSerialize(
+				EditorState.create({
+					doc: ytext?.toString(),
+					extensions: [
+						basicSetup,
+						EditorView.updateListener.of(processEditorUpdate),
+						EditorView.theme({
+							'&': { height: '100%' },
+							'.cm-scroller': { overflow: 'auto' },
+						}),
+						markdown({ codeLanguages: languages }),
+						EditorView.lineWrapping,
+						yCollab(ytext, store.provider?.awareness, {
+							undoManager: store.undoManager,
+						}),
+					],
+				})
+			);
 
 			codeMirrorRef.value = noSerialize(
 				new EditorView({
-					state,
+					state: state?.value as EditorState,
 					parent: editorRef.value as HTMLElement,
 				})
 			);
 			codeMirrorRef.value?.focus();
-			codeMirrorRef.value?.dispatch(state.update());
+			codeMirrorRef.value?.dispatch(
+				(state.value as EditorState).update()
+			);
 			// cleanup(() => { });
 		})
 		// { strategy: 'document-ready' }
