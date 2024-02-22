@@ -7,10 +7,12 @@ import {
 	useSignal,
 	useTask$,
 } from '@builder.io/qwik';
+// @ts-ignore
 import { isServer } from '@builder.io/qwik/build';
 
 import * as Y from 'yjs';
 import YPartyKitProvider from 'y-partykit/provider';
+// @ts-ignore
 import { yCollab } from 'y-codemirror.next';
 import * as random from 'lib0/random';
 
