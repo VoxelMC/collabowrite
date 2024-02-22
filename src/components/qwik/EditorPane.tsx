@@ -6,6 +6,7 @@ import {
 	noSerialize,
 	useSignal,
 	useTask$,
+	useOnDocument,
 } from '@builder.io/qwik';
 // @ts-ignore
 import { isServer } from '@builder.io/qwik/build';
@@ -125,8 +126,11 @@ export default component$(({ url }: ItemProps) => {
 		}
 	});
 
-	useTask$(
+	useVisibleTask$(
 		({ cleanup }) => {
+			// useOnDocument(
+			// 	'load',
+			// 	$(() => {
 			// if (isServer) {
 			// 	return; // Server guard
 			// }
@@ -186,9 +190,9 @@ export default component$(({ url }: ItemProps) => {
 			);
 			codeMirrorRef.value?.focus();
 			codeMirrorRef.value?.dispatch(state.update());
-			cleanup(() => { });
-		},
-		{ eagerness: 'load' }
+			// cleanup(() => { });
+		}
+		// { strategy: 'document-ready' }
 	);
 
 	return (
