@@ -36,6 +36,8 @@ import MarkdownIt from 'markdown-it';
 import MarkdownItIncrementalDOM from 'markdown-it-incremental-dom';
 import type { YText } from 'node_modules/yjs/dist/src/types/YText';
 import { EditorState } from '@codemirror/state';
+import supabase from '~/supabase/client';
+import type { PostgrestError } from '@supabase/supabase-js';
 
 interface ItemProps {
 	url: string;
@@ -47,6 +49,13 @@ interface Store {
 	ydoc?: Y.Doc;
 	provider?: YPartyKitProvider;
 	undoManager?: Y.UndoManager;
+}
+
+async function decodeDoc(json: string): Promise<Y.Doc> {
+	const update = Uint8Array.from(JSON.parse(json));
+	const doc = new Y.Doc();
+	Y.applyUpdate(doc, update);
+	return doc;
 }
 
 export default component$(({ url }: ItemProps) => {
@@ -89,13 +98,19 @@ export default component$(({ url }: ItemProps) => {
 			currentValue.value = value;
 		}
 	});
+	const initData = useSignal<{ data: any, error: PostgrestError | null }>();
 
-	useTask$(() => {
+	useTask$(async () => {
 		if (isServer) {
 			wsUrl.value =
 				import.meta.env.DEV && process.env.TESTING !== '1' ?
 					'localhost:49414'
 					: import.meta.env.PARTYKIT_URL;
+			const { data, error } = await supabase
+				.from('document')
+				.select('data')
+				.eq('uuid', url);
+			initData.value = { data, error }
 		}
 	});
 
@@ -109,7 +124,8 @@ export default component$(({ url }: ItemProps) => {
 			const multiplayerNames: Element[] = Array.from(
 				document.querySelectorAll('.cm-ySelectionInfo')
 			);
-			const arr = Array.from(document.querySelectorAll('.cm-line'))
+			const arr = Array.from(document.querySelectorAll('.cm-line'));
+			const newArr = arr
 				.map(e => {
 					let out = e.textContent as string;
 					for (let name of multiplayerNames) {
@@ -121,7 +137,7 @@ export default component$(({ url }: ItemProps) => {
 			IncrementalDOM.patch(
 				displayRef.value as HTMLElement,
 				// @ts-ignore
-				store.md.renderToIncrementalDOM(arr)
+				store.md.renderToIncrementalDOM(newArr)
 			);
 		}
 	});
@@ -132,10 +148,17 @@ export default component$(({ url }: ItemProps) => {
 	const languagesData = $(() => languages);
 	// useVisibleTask$(
 	// 	({ cleanup }) => {
+
 	useOnDocument(
 		'DOMContentLoaded',
 		$(async () => {
-			store.ydoc = noSerialize(new Y.Doc());
+			if (initData?.value?.error) {
+				store.ydoc = noSerialize(new Y.Doc());
+			} else {
+				store.ydoc = noSerialize(
+					await decodeDoc(initData?.value?.data[0].data as string)
+				);
+			}
 			store.provider = noSerialize(
 				new YPartyKitProvider(wsUrl.value as string, url, store.ydoc, {
 					params: () => ({
