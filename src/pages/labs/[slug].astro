@@ -38,7 +38,7 @@ const data: string[] = documents.data?.map(({ uuid }) => uuid) as string[];
 */
 
 // console.log(data);
-if (!user || !session) {
+if (!import.meta.env.DEV && (!user || !session)) {
     return Astro.redirect('/');
 }
 

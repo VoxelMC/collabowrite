@@ -143,6 +143,8 @@ export default component$(({ url }: ItemProps) => {
 	useOnDocument(
 		'DOMContentLoaded',
 		$(async () => {
+			const currentUser = (await window.supabase.auth.getUser());
+			if (!currentUser.data || currentUser.error) return;
 			if (initData?.value?.error || initData?.value?.data.length === 0) {
 				store.ydoc = noSerialize(new Y.Doc());
 			} else {
@@ -154,7 +156,7 @@ export default component$(({ url }: ItemProps) => {
 				new YPartyKitProvider(wsUrl.value as string, url, store.ydoc, {
 					params: () => ({
 						token: 'TOKEN',
-						userId: 'test-user',
+						userId: currentUser.data.user.id,
 					}),
 				})
 			);
@@ -167,7 +169,7 @@ export default component$(({ url }: ItemProps) => {
 			store.md = noSerialize(md);
 			store.undoManager = noSerialize(new Y.UndoManager(ytext as YText));
 			store?.provider?.awareness.setLocalStateField('user', {
-				name: (await window.supabase.auth.getUser()).data.user?.user_metadata.name,
+				name: currentUser.data.user?.user_metadata.name,
 				color: userColor.color,
 				colorLight: userColor.light,
 			});
