@@ -1,8 +1,11 @@
 ---
 import CommonHead from '~/components/astro/CommonHead.astro';
+import Navbar from '~/components/astro/Navbar.astro';
 interface Props {
     title: string;
 }
+
+import 'remixicon/fonts/remixicon.css';
 
 const { title } = Astro.props;
 ---
@@ -11,27 +14,26 @@ const { title } = Astro.props;
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <meta
-            name="description"
-            content="Write markdown collaboratively!"
-        />
-        <meta
-            name="viewport"
-            content="width=device-width"
-        />
-        <link
-            rel="icon"
-            type="image/svg+xml"
-            href="/favicon.svg"
-        />
-        <meta
-            name="generator"
-            content={Astro.generator}
-        />
-		<CommonHead />
+        <meta name="description" content="Write markdown collaboratively!" />
+        <meta name="viewport" content="width=device-width" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <meta name="generator" content={Astro.generator} />
+        <CommonHead />
         <title>{title}</title>
     </head>
     <body>
-        <slot />
+        <nav>
+            <Navbar />
+        </nav>
+        <section class="grid h-screen grid-cols-1 grid-rows-[1fr,15fr]">
+            <slot />
+        </section>
+        <script>
+            import { createBrowserClient } from '@supabase/ssr';
+            window.supabase = createBrowserClient(
+                import.meta.env.PUBLIC_SUPABASE_URL,
+                import.meta.env.PUBLIC_SUPABASE_ANON
+            );
+        </script>
     </body>
 </html>

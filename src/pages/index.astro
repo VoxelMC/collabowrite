@@ -1,29 +1,66 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Navbar from '../components/astro/Navbar.astro';
-import {
-    type Config,
-    uniqueNamesGenerator,
-    adjectives,
-    colors,
-    animals,
-} from 'unique-names-generator';
-
-const nameConfig: Config = {
-    dictionaries: [adjectives, colors],
-    separator: '-',
-    length: 2,
-};
-
-const shortName = uniqueNamesGenerator(nameConfig);
-return Astro.redirect(`/labs/${shortName}/`);
 ---
 
 <Layout title="Welcome to Astro.">
-    <main>
-        <section class="grid h-screen grid-cols-1 grid-rows-[1fr,15fr]">
-            <Navbar />
-            <!-- <Editor url={Astro.url.href} state="editor" /> -->
-        </section>
-    </main>
+	<main>
+		<section class="grid h-screen grid-cols-1 grid-rows-[1fr,15fr]">
+			<!-- <Editor url={Astro.url.href} state="editor" /> -->
+			<section class="flex flex-col items-center justify-center">
+				<span class="mt-10 font-mono text-lg">Welcome to...</span>
+				<h1 class="font-mono text-6xl font-bold text-primary">
+					CollaboWrite
+				</h1>
+				<button
+					id="call-to-action"
+					class="btn btn-outline btn-secondary mt-8 border-2 font-mono text-xl"
+					>Log In to Start CollaboWriting! <i
+						class="ri-github-fill ri-xl"></i></button
+				>
+			</section>
+			<script>
+				import {
+					type Config,
+					uniqueNamesGenerator,
+					adjectives,
+					colors,
+				} from 'unique-names-generator';
+				document.addEventListener('DOMContentLoaded', async () => {
+					const supabase = window.supabase;
+					const { error, data } = await supabase.auth.getSession();
+					console.log('before', error, data);
+					const callButton = document.getElementById(
+						'call-to-action'
+					) as HTMLElement;
+
+					if (!error && data.session === null) {
+						callButton.addEventListener('click', async () => {
+							// const { data, error } =
+							await supabase.auth.signInWithOAuth({
+								provider: 'github',
+								options: {
+									redirectTo:
+										import.meta.env.DEV ?
+											`http://localhost:4321/auth/callback`
+										:	`https://collabowrite.trevfox.dev/auth/callback`,
+								},
+							});
+						});
+					} else {
+						callButton.textContent = 'Start CollaboWriting!';
+						const nameConfig: Config = {
+							dictionaries: [adjectives, colors],
+							separator: '-',
+							length: 2,
+						};
+
+						const shortName = uniqueNamesGenerator(nameConfig);
+						callButton.addEventListener('click', () => {
+							document.location.assign(`/labs/${shortName}`);
+						});
+					}
+				});
+			</script>
+		</section>
+	</main>
 </Layout>

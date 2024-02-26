@@ -1,14 +1,17 @@
 /// <reference types="astro/client" />
 
-// declare module 'markdown-it-incremental-dom';
-
 interface ImportMetaEnv {
-	readonly SUPABASE_URL: string;
-	readonly SUPABASE_ANON: string;
-	// readonly SUPABASE_PASSWORD: string;
-	readonly PARTYKIT_URL: string;
+    readonly PUBLIC_SUPABASE_URL: string;
+    readonly PUBLIC_SUPABASE_ANON: string;
+    // readonly SUPABASE_PASSWORD: string;
+    readonly PARTYKIT_URL: string;
+    readonly VER: string;
 }
 
 interface ImportMeta {
-	readonly env: ImportMetaEnv;
+    readonly env: ImportMetaEnv;
+}
+
+interface Window {
+    supabase: import('@supabase/supabase-js').SupabaseClient;
 }
