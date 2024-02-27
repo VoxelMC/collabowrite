@@ -3,48 +3,48 @@
 ---
 
 <button
-	class="btn btn-outline btn-sm my-auto ml-auto flex items-center self-end border-white text-white data-[state='signed-in']:btn-error data-[state='signed-in']:border-white data-[state='signed-in']:!text-white"
-	id="github-signin"
-	data-state=""
-	><span id="nav-button-text">Sign In</span>
-	<i class="ri-github-fill ri-xl"></i></button
+    class="btn btn-outline btn-sm my-auto flex items-center self-end border-white text-white data-[state='signed-in']:btn-error data-[state='signed-in']:border-white data-[state='signed-in']:!text-white"
+    id="github-signin"
+    data-state=""
+    ><span id="nav-button-text">Sign In</span>
+    <i class="ri-github-fill ri-xl"></i></button
 >
 
 <script>
-	document.addEventListener('DOMContentLoaded', async () => {
-		const supabase = window.supabase;
-		const { error, data } = await supabase.auth.getSession();
-		// console.log('before', error, data);
+    document.addEventListener('DOMContentLoaded', async () => {
+        const supabase = window.supabase;
+        const { error, data } = await supabase.auth.getSession();
+        // console.log('before', error, data);
 
-		const text = document.getElementById(
-			'nav-button-text'
-		) as HTMLSpanElement;
-		const button = document.getElementById(
-			'github-signin'
-		) as HTMLButtonElement;
+        const text = document.getElementById(
+            'nav-button-text'
+        ) as HTMLSpanElement;
+        const button = document.getElementById(
+            'github-signin'
+        ) as HTMLButtonElement;
 
-		if (!error && data.session === null) {
-			text.textContent = 'Sign In';
-			async function signIn() {
-				await supabase.auth.signInWithOAuth({
-					provider: 'github',
-					options: {
-						redirectTo:
-							import.meta.env.DEV ?
-								`http://localhost:4321/auth/callback`
-							:	`https://collabowrite.trevfox.dev/auth/callback`,
-					},
-				});
-			}
-			button.addEventListener('click', signIn);
-			button.dataset.state = 'signed-out';
-		} else {
-			text.textContent = 'Sign Out';
-			async function signOut() {
-				window.location.assign('/auth/signout');
-			}
-			button.addEventListener('click', signOut);
-			button.dataset.state = 'signed-in';
-		}
-	});
+        if (!error && data.session === null) {
+            text.textContent = 'Sign In';
+            async function signIn() {
+                await supabase.auth.signInWithOAuth({
+                    provider: 'github',
+                    options: {
+                        redirectTo:
+                            import.meta.env.DEV ?
+                                `http://localhost:4321/auth/callback`
+                            :   `https://collabowrite.trevfox.dev/auth/callback`,
+                    },
+                });
+            }
+            button.addEventListener('click', signIn);
+            button.dataset.state = 'signed-out';
+        } else {
+            text.textContent = 'Sign Out';
+            async function signOut() {
+                window.location.assign('/auth/signout');
+            }
+            button.addEventListener('click', signOut);
+            button.dataset.state = 'signed-in';
+        }
+    });
 </script>

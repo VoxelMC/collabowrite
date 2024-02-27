@@ -29,6 +29,7 @@
         "@supabase/supabase-js": "^2.39.7",
         "@tailwindcss/typography": "^0.5.10",
         "astro": "^4.4.4",
+        "astro-font": "^0.0.77",
         "codemirror": "^6.0.1",
         "daisyui": "^4.7.2",
         "fast-array-diff": "^1.1.0",

@@ -20,9 +20,7 @@ import { EditorView, basicSetup } from 'codemirror';
 import type { ViewUpdate } from '@codemirror/view';
 import { markdown } from '@codemirror/lang-markdown';
 import { languages } from '@codemirror/language-data';
-import {
-	type Update,
-} from '@codemirror/collab';
+import { type Update } from '@codemirror/collab';
 
 import * as IncrementalDOM from 'incremental-dom';
 import MarkdownIt from 'markdown-it';
@@ -143,7 +141,7 @@ export default component$(({ url }: ItemProps) => {
 	useOnDocument(
 		'DOMContentLoaded',
 		$(async () => {
-			const currentUser = (await window.supabase.auth.getUser());
+			const currentUser = await window.supabase.auth.getUser();
 			if (!currentUser.data || currentUser.error) return;
 
 			if (initData?.value?.error || initData?.value?.data.length === 0) {
@@ -183,10 +181,10 @@ export default component$(({ url }: ItemProps) => {
 						EditorView.updateListener.of(processEditorUpdate),
 						EditorView.theme({
 							'&': { height: '100%' },
+							'& *': { fontFamily: "'JetBrains Mono'" },
 							'.cm-scroller': { overflow: 'auto' },
 						}),
 						markdown({ codeLanguages: await languagesData() }),
-						// markdown(),
 						EditorView.lineWrapping,
 						yCollab(ytext, store.provider?.awareness, {
 							undoManager: store.undoManager,
@@ -208,11 +206,11 @@ export default component$(({ url }: ItemProps) => {
 	return (
 		<section class="flex h-[80vh] flex-row justify-between">
 			<div
-				class="output prose prose-stone h-full w-[49.5%] max-w-none border border-black bg-white"
+				class="output mono prose prose-stone h-full w-[49.5%] max-w-none border border-black bg-white"
 				ref={editorRef}
 			></div>
 			<div
-				class="output prose prose-stone prose-headings:mb-3 prose-h1:text-4xl prose-h2:mb-2 prose-h2:mt-4 prose-h2:text-3xl prose-h3:mt-4 prose-h3:text-2xl prose-h4:mt-4 prose-h4:text-xl prose-h5:mt-4 prose-h5:text-lg prose-h6:mt-4 prose-p:my-2 w-[49.5%] max-w-none overflow-y-scroll text-wrap border border-black bg-white px-4 py-2 leading-normal"
+				class="output prose prose-stone w-[49.5%] max-w-none overflow-y-scroll text-wrap border border-black bg-white px-4 py-2 leading-normal prose-headings:mb-3 prose-h1:text-4xl prose-h2:mb-2 prose-h2:mt-4 prose-h2:text-3xl prose-h3:mt-4 prose-h3:text-2xl prose-h4:mt-4 prose-h4:text-xl prose-h5:mt-4 prose-h5:text-lg prose-h6:mt-4 prose-p:my-2"
 				ref={displayRef}
 			></div>
 		</section>

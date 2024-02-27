@@ -2,17 +2,59 @@
 import NavAuthButton from './NavAuthButton.astro';
 ---
 
-<nav class="flex h-full w-full flex-row bg-primary px-4 py-2">
-    <h1 class="my-auto text-2xl font-extrabold text-primary-content">
-        <a class="inline-flex items-center" href="/">
-            <img
-                src="/collabowrite-favicon.svg"
-                class="mr-4 inline h-6 fill-white stroke-white text-white invert"
-            />
-            <span class="self-end">CollaboWrite</span></a
+<nav class="grid h-full w-full grid-cols-[2fr,1fr,2fr] bg-primary px-4 py-2">
+    <section class="flex items-center">
+        <h1 class="my-auto text-2xl font-extrabold text-primary-content">
+            <a class="inline-flex items-center" href="/">
+                <img
+                    src="/collabowrite-favicon.svg"
+                    class="mr-4 inline h-6 fill-white stroke-white text-white invert"
+                />
+                <span class="self-end">CollaboWrite</span></a
+            >
+            <span class="text-xs text-secondary-content"
+                >{import.meta.env.VER}</span
+            >
+        </h1>
+    </section>
+    <section class="flex items-center justify-center">
+        <button
+            id="new-document-button"
+            class="btn btn-outline btn-accent btn-sm justify-center border-2 pl-2"
+            ><i class="ri-add-fill ri-xl"></i>Create New Lab</button
         >
-        <span class="text-xs text-secondary-content">{import.meta.env.VER}</span
-        >
-    </h1>
-    <NavAuthButton />
+    </section>
+    <section class="flex items-center justify-end">
+        <NavAuthButton />
+    </section>
 </nav>
+<script>
+    import {
+        type Config,
+        uniqueNamesGenerator,
+        adjectives,
+        colors,
+    } from 'unique-names-generator';
+    document.addEventListener('DOMContentLoaded', async () => {
+        const supabase = window.supabase;
+        const { error, data } = await supabase.auth.getSession();
+        const newDocButton = document.getElementById(
+            'new-document-button'
+        ) as HTMLElement;
+
+        if (!error && data.session === null) {
+            newDocButton.style.display = 'none';
+        } else {
+            const nameConfig: Config = {
+                dictionaries: [adjectives, colors],
+                separator: '-',
+                length: 2,
+            };
+
+            const shortName = uniqueNamesGenerator(nameConfig);
+            newDocButton.addEventListener('click', () => {
+                document.location.assign(`/labs/${shortName}`);
+            });
+        }
+    });
+</script>
