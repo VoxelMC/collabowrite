@@ -13,7 +13,7 @@ const { url, user } = Astro.props;
 {/* Editor Pane  */}
 <div class="h-full w-full bg-base-100 px-8 py-4">
     <div class="rounded-t-lg bg-success p-4">
-        <b>Hello {user.user_metadata.name}!</b> Send someone to <a
+        <b>Hello {user ? user.user_metadata.name : "Test-User"}!</b> Send someone to <a
             target="_blank"
             class="link link-primary"
             href={import.meta.env.BASE_URL + 'labs/' + url}

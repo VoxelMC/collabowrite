@@ -145,6 +145,7 @@ export default component$(({ url }: ItemProps) => {
 		$(async () => {
 			const currentUser = (await window.supabase.auth.getUser());
 			if (!currentUser.data || currentUser.error) return;
+
 			if (initData?.value?.error || initData?.value?.data.length === 0) {
 				store.ydoc = noSerialize(new Y.Doc());
 			} else {

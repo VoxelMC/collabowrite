@@ -3,6 +3,8 @@ import Layout from '../../layouts/Layout.astro';
 import Editor from '../../layouts/Editor.astro';
 
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
+import { serverClient } from '~/util/createServerClient';
+import type { User } from '@supabase/supabase-js';
 
 const supabase = createServerClient(
     import.meta.env.PUBLIC_SUPABASE_URL,
@@ -25,7 +27,7 @@ const supabase = createServerClient(
 const {
     data: { session },
 } = await supabase.auth.getSession();
-const {
+let {
     data: { user },
 } = await supabase.auth.getUser();
 
@@ -37,10 +39,11 @@ const documents = await supabase.from('document').select('uuid');
 const data: string[] = documents.data?.map(({ uuid }) => uuid) as string[];
 */
 
-// console.log(data);
+console.log("ASDASD", session, user);
 if (!import.meta.env.DEV && (!user || !session)) {
     return Astro.redirect('/');
 }
+user = user as User;
 
 // For now, this only redirects if NOT DEV
 // if (
