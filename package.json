@@ -5,6 +5,7 @@
     "scripts": {
         "dev": "astro dev --host",
         "dev:test": "TESTING=1 astro dev --host",
+        "dev:locked": "UNLOCKED=false astro dev --host",
         "start": "astro dev",
         "build": "astro build",
         "preview": "astro preview",

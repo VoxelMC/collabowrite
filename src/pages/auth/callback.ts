@@ -5,6 +5,7 @@ export const GET: APIRoute = async ({ request, cookies, redirect }) => {
 	const requestUrl = new URL(request.url);
 	const code = requestUrl.searchParams.get('code');
 	const next = requestUrl.searchParams.get('next') || '/';
+	const slug = cookies.get('cwredirect')?.value.replace("/", "");
 
 	if (code) {
 		const supabase = createServerClient(
@@ -28,7 +29,11 @@ export const GET: APIRoute = async ({ request, cookies, redirect }) => {
 		const { error } = await supabase.auth.exchangeCodeForSession(code);
 
 		if (!error) {
-			return redirect(next);
+			if (slug !== "undefined") {
+				return redirect(next + slug);
+			} else {
+				return redirect(next);
+			}
 		}
 	}
 

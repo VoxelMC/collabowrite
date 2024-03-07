@@ -27,7 +27,6 @@ import Layout from '../layouts/Layout.astro';
 				document.addEventListener('DOMContentLoaded', async () => {
 					const supabase = window.supabase;
 					const { error, data } = await supabase.auth.getSession();
-					console.log('before', error, data);
 					const callButton = document.getElementById(
 						'call-to-action'
 					) as HTMLElement;

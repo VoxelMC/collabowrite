@@ -1,8 +1,9 @@
 ---
 import NavAuthButton from '~/components/astro/NavAuthButton.astro';
 import Layout from '~/layouts/Layout.astro';
+const slug = Astro.url.searchParams.get('redirect');
 ---
 
 <Layout title="Sign In">
-	<NavAuthButton />
+	<NavAuthButton slug={slug?.toString()} />
 </Layout>

@@ -1,5 +1,9 @@
 ---
 import NavAuthButton from './NavAuthButton.astro';
+export interface Props {
+	navToSlug: string;
+}
+const { navToSlug } = Astro.props;
 ---
 
 <nav class="grid h-full w-full grid-cols-[2fr,1fr,2fr] bg-primary px-4 py-2">
@@ -25,7 +29,7 @@ import NavAuthButton from './NavAuthButton.astro';
         >
     </section>
     <section class="flex items-center justify-end">
-        <NavAuthButton />
+        <NavAuthButton slug={navToSlug} />
     </section>
 </nav>
 <script>

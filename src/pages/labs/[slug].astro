@@ -7,28 +7,28 @@ import { serverClient } from '~/util/createServerClient';
 import type { User } from '@supabase/supabase-js';
 
 const supabase = createServerClient(
-    import.meta.env.PUBLIC_SUPABASE_URL,
-    import.meta.env.PUBLIC_SUPABASE_ANON,
-    {
-        cookies: {
-            get(key: string) {
-                return Astro.cookies.get(key)?.value;
-            },
-            set(key: string, value: string, options: CookieOptions) {
-                Astro.cookies.set(key, value, options);
-            },
-            remove(key: string, options) {
-                Astro.cookies.delete(key, options);
-            },
-        },
-    }
+	import.meta.env.PUBLIC_SUPABASE_URL,
+	import.meta.env.PUBLIC_SUPABASE_ANON,
+	{
+		cookies: {
+			get(key: string) {
+				return Astro.cookies.get(key)?.value;
+			},
+			set(key: string, value: string, options: CookieOptions) {
+				Astro.cookies.set(key, value, options);
+			},
+			remove(key: string, options) {
+				Astro.cookies.delete(key, options);
+			},
+		},
+	}
 );
 
 const {
-    data: { session },
+	data: { session },
 } = await supabase.auth.getSession();
 let {
-    data: { user },
+	data: { user },
 } = await supabase.auth.getUser();
 
 const { slug } = Astro.params;
@@ -39,9 +39,12 @@ const documents = await supabase.from('document').select('uuid');
 const data: string[] = documents.data?.map(({ uuid }) => uuid) as string[];
 */
 
-// console.log("ASDASD", session, user);
-if (!import.meta.env.DEV && (!user || !session)) {
-    return Astro.redirect('/');
+Astro.cookies.set('cwredirect', Astro.url.pathname, { sameSite: 'none', secure: true });
+if (
+	(process.env.UNLOCKED === 'false' || !import.meta.env.DEV) &&
+	(!user || !session)
+) {
+	return Astro.redirect('/auth/signin?redirect=' + Astro.url.pathname);
 }
 user = user as User;
 
@@ -55,11 +58,11 @@ user = user as User;
 ---
 
 <Layout title={('CollaboWrite | ' + slug) as string}>
-    <Editor {user} url={slug as string} state="editor" />
+	<Editor {user} url={slug as string} state="editor" />
 </Layout>
 
 <style is:global>
-    .prose *:first-child {
-        @apply mt-0;
-    }
+	.prose *:first-child {
+		@apply mt-0;
+	}
 </style>
