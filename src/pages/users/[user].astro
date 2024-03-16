@@ -1,0 +1,41 @@
+---
+
+const { user } = Astro.params;
+import { createServerClient, type CookieOptions } from '@supabase/ssr';
+import type { User } from '@supabase/supabase-js';
+
+const supabase = createServerClient(
+	import.meta.env.PUBLIC_SUPABASE_URL,
+	import.meta.env.PUBLIC_SUPABASE_ANON,
+	{
+		cookies: {
+			get(key: string) {
+				return Astro.cookies.get(key)?.value;
+			},
+			set(key: string, value: string, options: CookieOptions) {
+				Astro.cookies.set(key, value, options);
+			},
+			remove(key: string, options) {
+				Astro.cookies.delete(key, options);
+			},
+		},
+	}
+);
+
+const {
+	data: { session },
+} = await supabase.auth.getSession();
+let {
+	data: { user: currentUser },
+} = await supabase.auth.getUser();
+
+const userCheck = supabase.from('auth')
+
+// NOTE: So, what needs to happen here?
+// Okay, so first, check if the `user` is present in the database. if not, Show a "user not found" page/component.
+// Then, check to see if the `user` name is the same as the logged-in user's name. There should not be collisions here
+// if we are only using one authentication engine. If the same, then show things with admin perms (private notes, delete, modify).
+// OR, just have this be the "public page" sort of thing, and have a dashboard page instead (perhaps `users/me`?)
+
+
+---

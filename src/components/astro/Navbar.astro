@@ -1,4 +1,5 @@
 ---
+import DashboardButton from './DashboardButton.astro';
 import NavAuthButton from './NavAuthButton.astro';
 export interface Props {
 	navToSlug: string;
@@ -30,6 +31,7 @@ const { navToSlug } = Astro.props;
     </section>
     <section class="flex items-center justify-end">
         <NavAuthButton slug={navToSlug} />
+		<DashboardButton />
     </section>
 </nav>
 <script>

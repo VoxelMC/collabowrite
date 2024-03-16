@@ -1,0 +1,72 @@
+---
+import { createServerClient, type CookieOptions } from '@supabase/ssr';
+import type { User } from '@supabase/supabase-js';
+import LabCard from '~/components/astro/LabCard.astro';
+import type { LabData } from '~/components/types';
+import Layout from '~layouts/Layout.astro';
+
+const supabase = createServerClient(
+	import.meta.env.PUBLIC_SUPABASE_URL,
+	import.meta.env.PUBLIC_SUPABASE_ANON,
+	{
+		cookies: {
+			get(key: string) {
+				return Astro.cookies.get(key)?.value;
+			},
+			set(key: string, value: string, options: CookieOptions) {
+				Astro.cookies.set(key, value, options);
+			},
+			remove(key: string, options) {
+				Astro.cookies.delete(key, options);
+			},
+		},
+	}
+);
+
+const {
+	data: { session },
+} = await supabase.auth.getSession();
+let {
+	data: { user },
+} = await supabase.auth.getUser();
+
+Astro.cookies.set('cwredirect', Astro.url.pathname, {
+	sameSite: 'none',
+	secure: true,
+});
+if (
+	(process.env.UNLOCKED === 'false' || !import.meta.env.DEV) &&
+	(!user || !session)
+) {
+	return Astro.redirect('/auth/signin?redirect=' + Astro.url.pathname);
+}
+user = user as User;
+const userMeta = user.user_metadata;
+const username = userMeta.name;
+const preferredName = userMeta.preferred_username;
+
+const labs = await supabase.from('document').select('*').eq('owner', user.id);
+if (labs.error) return Astro.redirect('/404');
+
+const labData = labs.data as LabData[];
+---
+
+<Layout title="CollaboWrite | Dashboard">
+	<section
+		class="mx-auto mt-8 flex min-h-[80vh] h-fit w-10/12 overflow-hidden rounded-xl p-4"
+	>
+		<div class="bg-bas-200 flex w-3/4 flex-col">
+			<h1 class="text-5xl font-bold">Hello, {username}</h1>
+			<div class="pt-4 flex flex-wrap overflow-y-">
+				{labData.map(lab => <LabCard details={lab} owner={username} />)}
+			</div>
+		</div>
+		<div class="flex h-full min-h-[80vh] w-1/4">
+			<div class="flex w-full flex-col rounded-xl bg-slate-200 p-4">
+				<h2 class="text-4xl font-bold">Profile</h2>
+				<h3></h3>
+				<h4 class="text-slate-500">{preferredName}</h4>
+			</div>
+		</div>
+	</section>
+</Layout>

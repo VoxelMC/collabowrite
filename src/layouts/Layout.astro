@@ -26,9 +26,9 @@ const slug = Astro.url.searchParams.get('redirect');
         <nav>
             <Navbar navToSlug={slug?.toString() as string} />
         </nav>
-        <section class="grid h-screen grid-cols-1 grid-rows-[1fr,15fr]">
+        <main class="grid h-screen grid-cols-1 grid-rows-[1fr,15fr]">
             <slot />
-        </section>
+        </main>
         <script>
             import { createBrowserClient } from '@supabase/ssr';
             window.supabase = createBrowserClient(

@@ -1,0 +1,31 @@
+---
+
+---
+
+<button
+	class="btn btn-outline btn-sm my-auto ml-2 hidden items-center self-end border-white text-white data-[state='signed-in']:flex data-[state='signed-in']:border-white"
+	id="dashboard-button"
+	data-state=""
+	><span id="dashboard-button-text">My Labs</span>
+	<i class="ri-flask-line ri-xl"></i></button
+>
+
+<script>
+	document.addEventListener('DOMContentLoaded', async () => {
+		const supabase = window.supabase;
+		const { error, data } = await supabase.auth.getSession();
+
+		const button = document.getElementById(
+			'dashboard-button'
+		) as HTMLButtonElement;
+
+		if (!error && data.session === null) {
+			button.dataset.state = 'signed-out';
+		} else {
+			button.dataset.state = 'signed-in';
+			button.addEventListener('click', () => {
+				document.location.assign("/users/me")
+			});
+		}
+	});
+</script>

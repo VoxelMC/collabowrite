@@ -6,7 +6,8 @@
 		"baseUrl": ".",
 		"paths": {
 			"~/*": ["src/*"],
-			"~components/qwik/*": ["src/components/qwik/*"]
+			"~components/qwik/*": ["src/components/qwik/*"],
+			"~layouts/*": ["src/layouts/*"]
 		}
     }
 }

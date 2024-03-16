@@ -1,0 +1,18 @@
+---
+import type { LabData } from '../types';
+interface Props {
+	details: LabData;
+	owner: string;
+}
+
+const { details, owner } = Astro.props;
+---
+
+<a class="mb-2 mr-2 h-40 pt-2 pb-3 px-4 w-1/4 bg-slate-300 hover:bg-accent transition-colors duration-100 rounded-md" href={`/labs/${details.uuid}`}>
+	<article class="flex flex-col h-full">
+		<h1 class="text-lg font-bold text-secondary">/{details.uuid}</h1>
+		<p class="text-slate-700">{details.description}</p>
+
+		<span class="mt-auto block text-slate-600">{owner}</span>
+	</article>
+</a>
