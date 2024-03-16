@@ -8,11 +8,47 @@ interface Props {
 const { details, owner } = Astro.props;
 ---
 
-<a class="mb-2 mr-2 h-40 pt-2 pb-3 px-4 w-1/4 bg-slate-300 hover:bg-accent transition-colors duration-100 rounded-md" href={`/labs/${details.uuid}`}>
-	<article class="flex flex-col h-full">
+<a
+	id={`${details.uuid}-card`}
+	class="lab-card mb-2 mr-2 h-40 w-[30%] rounded-md bg-slate-300 px-4 pb-3 pt-2 transition-colors duration-100 hover:bg-accent"
+	href={`/labs/${details.uuid}`}
+	data-for={details.uuid}
+	data-ishovering="false"
+>
+	<article class="flex h-full flex-col">
 		<h1 class="text-lg font-bold text-secondary">/{details.uuid}</h1>
 		<p class="text-slate-700">{details.description}</p>
 
 		<span class="mt-auto block text-slate-600">{owner}</span>
 	</article>
 </a>
+
+<script>
+	const cardEls = document.getElementsByClassName(
+		'lab-card'
+	) as HTMLCollectionOf<HTMLAnchorElement>;
+	for (let card of cardEls) {
+		card.addEventListener('mouseover', e => {
+			const current = e.target as HTMLElement;
+			const main = e.currentTarget as HTMLElement;
+			// console.log(current, main)
+			// console.log(main.dataset.ishovering)
+			// if (main.dataset.ishovering == 'false' && current == main) {
+				main.dataset.ishovering = 'true';
+				// console.log('dispatched');
+				window.dispatchEvent(
+					new CustomEvent('mount-preview', {
+						detail: { slug: card.dataset.for },
+					})
+				);
+			// }
+		});
+		card.addEventListener('pointerout', e => {
+			const current = e.target as HTMLElement;
+			const main = e.currentTarget as HTMLElement;
+			if (current.dataset.ishovering == 'true' && current == main) {
+				current.dataset.ishovering = 'false';
+			}
+		});
+	}
+</script>
