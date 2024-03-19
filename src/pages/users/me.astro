@@ -36,10 +36,11 @@ Astro.cookies.set('cwredirect', Astro.url.pathname, {
 });
 if (
 	(process.env.UNLOCKED === 'false' || !import.meta.env.DEV) &&
-	(!user || !session)
+	(!user || !session || !user.user_metadata)
 ) {
 	return Astro.redirect('/auth/signin?redirect=' + Astro.url.pathname);
 }
+console.log(user)
 user = user as User;
 const userMeta = user.user_metadata;
 const username = userMeta.name;
@@ -48,12 +49,17 @@ const preferredName = userMeta.preferred_username;
 const labs = await supabase.from('document').select('*').eq('owner', user.id);
 if (labs.error) return Astro.redirect('/404');
 
-const labData = labs.data as LabData[];
+const labData = labs.data.toSorted((a, b) => {
+	let aTime = new Date(a.created_at).getTime();
+	let bTime = new Date(b.created_at).getTime();
+	return bTime - aTime
+}) as LabData[];
+console.log(new Date(labData[0].created_at).getTime())
 ---
 
 <Layout title="CollaboWrite | Dashboard">
 	<section
-		class="mx-auto mt-8 flex h-fit min-h-[80vh] w-10/12 overflow-hidden rounded-xl p-4"
+		class="mx-auto mt-8 flex h-fit min-h-[80vh] w-10/12 relative rounded-xl p-4"
 	>
 		<div class="bg-bas-200 flex w-3/5 flex-col">
 			<h1 class="text-5xl font-bold">Hello, {username}</h1>
@@ -61,12 +67,12 @@ const labData = labs.data as LabData[];
 				{labData.map(lab => <LabCard details={lab} owner={username} />)}
 			</div>
 		</div>
-		<div class="flex h-full min-h-[80vh] w-2/5">
+		<div class="flex h-full min-h-[80vh] w-2/5 sticky self-start top-10">
 			<div class="flex w-full flex-col rounded-xl bg-slate-200 p-4">
 				<h2 class="text-4xl font-bold">Preview</h2>
 				<!-- <h4 class="text-slate-500">{preferredName}</h4> -->
 				<h3 id="filename" class="text-xl font-bold"></h3>
-				<div id="preview"></div>
+				<div id="preview" class="text-wrap [&>*]:text-wrap w-full break-all"></div>
 			</div>
 		</div>
 	</section>
