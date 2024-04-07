@@ -2,29 +2,29 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 
 const supabase = createServerClient(
-	import.meta.env.PUBLIC_SUPABASE_URL,
-	import.meta.env.PUBLIC_SUPABASE_ANON,
-	{
-		cookies: {
-			get(key: string) {
-				return Astro.cookies.get(key)?.value;
-			},
-			set(key: string, value: string, options: CookieOptions) {
-				Astro.cookies.set(key, value, options);
-			},
-			remove(key: string, options) {
-				Astro.cookies.delete(key, options);
-			},
-		},
-	}
+    import.meta.env.PUBLIC_SUPABASE_URL,
+    import.meta.env.PUBLIC_SUPABASE_ANON,
+    {
+        cookies: {
+            get(key: string) {
+                return Astro.cookies.get(key)?.value;
+            },
+            set(key: string, value: string, options: CookieOptions) {
+                Astro.cookies.set(key, value, options);
+            },
+            remove(key: string, options) {
+                Astro.cookies.delete(key, options);
+            },
+        },
+    }
 );
 const { error } = await supabase.auth.signOut();
-console.log(error);
+// console.log(error);
 // Astro.redirect(Astro.request)
 ---
 
 <script is:inline>
-	setTimeout(() => {
-		window.location.assign('/');
-	}, 1000);
+    setTimeout(() => {
+        window.location.assign('/');
+    }, 1000);
 </script>

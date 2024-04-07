@@ -91,6 +91,7 @@ export default component$(({ url }: ItemProps) => {
 			currentValue.value = value;
 		}
 	});
+
 	const initData = useSignal<{ data: any; error: PostgrestError | null }>();
 
 	useTask$(async () => {
@@ -180,7 +181,7 @@ export default component$(({ url }: ItemProps) => {
 						basicSetup,
 						EditorView.updateListener.of(processEditorUpdate),
 						EditorView.theme({
-							'&': { height: '100%' },
+							'&': { height: 'auto', maxHeight: '100%' },
 							'& *': { fontFamily: "'JetBrains Mono'" },
 							'.cm-scroller': { overflow: 'auto' },
 						}),
@@ -192,6 +193,48 @@ export default component$(({ url }: ItemProps) => {
 					],
 				})
 			);
+
+			function getSanitizedInputField(): string {
+				const multiplayerNames: Element[] = Array.from(
+					document.querySelectorAll('.cm-ySelectionInfo')
+				);
+				const arr = Array.from(document.querySelectorAll('.cm-line'));
+				console.log(arr);
+				const out = arr
+					.map(e => {
+						let out = e.textContent as string;
+						for (let name of multiplayerNames) {
+							out = out.replaceAll(
+								name.textContent as string,
+								''
+							);
+						}
+						return out;
+					})
+					.join('\n');
+				return out;
+			}
+
+			function download(
+				content: string,
+				mimeType: string,
+				filename: string
+			) {
+				const a = document.createElement('a'); // Create "a" element
+				const blob = new Blob([content], { type: mimeType }); // Create a blob (file-like object)
+				const url = URL.createObjectURL(blob); // Create an object URL from blob
+				a.setAttribute('href', url); // Set "a" element link
+				a.setAttribute('download', filename); // Set download filename
+				a.click(); // Start downloading
+			}
+
+			document.addEventListener('download-md', (payload: any) => {
+				const url = payload.detail.url;
+				const input = codeMirrorRef?.value?.state.doc.toString() as string;
+				download(input, 'text/markdown', url + '.md');
+				console.log('Downloaded as' + url + '.md');
+				console.log(input);
+			});
 
 			codeMirrorRef.value = noSerialize(
 				new EditorView({

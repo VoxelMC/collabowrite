@@ -6,41 +6,41 @@ import type { LabData } from '~/components/types';
 import Layout from '~layouts/Layout.astro';
 
 const supabase = createServerClient(
-	import.meta.env.PUBLIC_SUPABASE_URL,
-	import.meta.env.PUBLIC_SUPABASE_ANON,
-	{
-		cookies: {
-			get(key: string) {
-				return Astro.cookies.get(key)?.value;
-			},
-			set(key: string, value: string, options: CookieOptions) {
-				Astro.cookies.set(key, value, options);
-			},
-			remove(key: string, options) {
-				Astro.cookies.delete(key, options);
-			},
-		},
-	}
+    import.meta.env.PUBLIC_SUPABASE_URL,
+    import.meta.env.PUBLIC_SUPABASE_ANON,
+    {
+        cookies: {
+            get(key: string) {
+                return Astro.cookies.get(key)?.value;
+            },
+            set(key: string, value: string, options: CookieOptions) {
+                Astro.cookies.set(key, value, options);
+            },
+            remove(key: string, options) {
+                Astro.cookies.delete(key, options);
+            },
+        },
+    }
 );
 
 const {
-	data: { session },
+    data: { session },
 } = await supabase.auth.getSession();
 let {
-	data: { user },
+    data: { user },
 } = await supabase.auth.getUser();
 
 Astro.cookies.set('cwredirect', Astro.url.pathname, {
-	sameSite: 'none',
-	secure: true,
+    sameSite: 'none',
+    secure: true,
 });
 if (
-	(process.env.UNLOCKED === 'false' || !import.meta.env.DEV) &&
-	(!user || !session || !user.user_metadata)
+    (process.env.UNLOCKED === 'false' || !import.meta.env.DEV) &&
+    (!user || !session || !user.user_metadata)
 ) {
-	return Astro.redirect('/auth/signin?redirect=' + Astro.url.pathname);
+    return Astro.redirect('/auth/signin?redirect=' + Astro.url.pathname);
 }
-console.log(user)
+// console.log(user)
 user = user as User;
 const userMeta = user.user_metadata;
 const username = userMeta.name;
@@ -50,65 +50,69 @@ const labs = await supabase.from('document').select('*').eq('owner', user.id);
 if (labs.error) return Astro.redirect('/404');
 
 const labData = labs.data.toSorted((a, b) => {
-	let aTime = new Date(a.created_at).getTime();
-	let bTime = new Date(b.created_at).getTime();
-	return bTime - aTime
+    let aTime = new Date(a.created_at).getTime();
+    let bTime = new Date(b.created_at).getTime();
+    return bTime - aTime;
 }) as LabData[];
-console.log(new Date(labData[0].created_at).getTime())
+// console.log(new Date(labData[0].created_at).getTime())
 ---
 
 <Layout title="CollaboWrite | Dashboard">
-	<section
-		class="mx-auto mt-8 flex h-fit min-h-[80vh] w-10/12 relative rounded-xl p-4"
-	>
-		<div class="bg-bas-200 flex w-3/5 flex-col">
-			<h1 class="text-5xl font-bold">Hello, {username}</h1>
-			<div class="overflow-y- flex flex-wrap pt-4">
-				{labData.map(lab => <LabCard details={lab} owner={username} />)}
-			</div>
-		</div>
-		<div class="flex h-full min-h-[80vh] w-2/5 sticky self-start top-10">
-			<div class="flex w-full flex-col rounded-xl bg-slate-200 p-4">
-				<h2 class="text-4xl font-bold">Preview</h2>
-				<!-- <h4 class="text-slate-500">{preferredName}</h4> -->
-				<h3 id="filename" class="text-xl font-bold"></h3>
-				<div id="preview" class="text-wrap [&>*]:text-wrap w-full break-all"></div>
-			</div>
-		</div>
-	</section>
+    <section
+        class="relative mx-auto mt-8 flex h-fit min-h-[80vh] w-10/12 rounded-xl p-4"
+    >
+        <div class="bg-bas-200 flex w-3/5 flex-col">
+            <h1 class="text-5xl font-bold">Hello, {username}</h1>
+            <div class="overflow-y- flex flex-wrap pt-4">
+                {labData.map(lab => <LabCard details={lab} owner={username} />)}
+            </div>
+        </div>
+        <div class="sticky top-10 flex h-full min-h-[80vh] w-2/5 self-start">
+            <div class="flex w-full flex-col rounded-xl bg-slate-200 p-4">
+                <h2 class="text-4xl font-bold">Preview</h2>
+                <!-- <h4 class="text-slate-500">{preferredName}</h4> -->
+                <h3 id="filename" class="text-xl font-bold"></h3>
+                <div
+                    id="preview"
+                    class="w-full text-wrap break-all [&>*]:text-wrap"
+                >
+                </div>
+            </div>
+        </div>
+    </section>
 </Layout>
 
 <script>
-	import MarkdownIt from 'markdown-it';
-	import type { YText } from 'node_modules/yjs/dist/src/internals';
-	import * as Y from 'yjs';
-	const previewEl = document.getElementById('preview') as HTMLElement;
-	const filenameEl = document.getElementById('filename') as HTMLElement;
-	document.addEventListener('DOMContentLoaded', async () => {
-		const supabase = window.supabase;
-		const { data, error } = await supabase
-			.from('document')
-			.select('data, uuid');
+    import MarkdownIt from 'markdown-it';
+    import type { YText } from 'node_modules/yjs/dist/src/internals';
+    import * as Y from 'yjs';
+    const previewEl = document.getElementById('preview') as HTMLElement;
+    const filenameEl = document.getElementById('filename') as HTMLElement;
+    document.addEventListener('DOMContentLoaded', async () => {
+        const supabase = window.supabase;
+        const { data, error } = await supabase
+            .from('document')
+            .select('data, uuid');
 
-		async function decodeDoc(json: string): Promise<Y.Doc> {
-			const update = Uint8Array.from(JSON.parse(json));
-			const doc = new Y.Doc();
-			Y.applyUpdate(doc, update);
-			return doc;
-		}
+        async function decodeDoc(json: string): Promise<Y.Doc> {
+            const update = Uint8Array.from(JSON.parse(json));
+            const doc = new Y.Doc();
+            Y.applyUpdate(doc, update);
+            return doc;
+        }
 
-		window.addEventListener('mount-preview', async e => {
-			const md = MarkdownIt();
-			// @ts-ignore
-			const detail = e.detail;
-			if (error) return;
+        window.addEventListener('mount-preview', async e => {
+            const md = MarkdownIt();
+            // @ts-ignore
+            const detail = e.detail;
+            if (error) return;
 
-			filenameEl.textContent = "/" + detail.slug
-			const filtered = data.filter(item => item.uuid == detail.slug);
-			const ydoc = await decodeDoc(filtered[0].data);
-			const mdText: YText = ydoc.getText('codemirror');
-			const rendered = md.render(mdText?.toJSON())
-			previewEl.innerHTML = rendered;
-		});
-	});
+            filenameEl.textContent = '/' + detail.slug;
+            const filtered = data.filter(item => item.uuid == detail.slug);
+            const ydoc = await decodeDoc(filtered[0].data);
+            const mdText: YText = ydoc.getText('codemirror');
+            const rendered = md.render(mdText?.toJSON());
+            previewEl.innerHTML = rendered;
+        });
+    });
 </script>
