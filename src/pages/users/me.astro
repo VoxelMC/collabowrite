@@ -50,11 +50,18 @@ const labs = await supabase.from('document').select('*').eq('owner', user.id);
 if (labs.error) return Astro.redirect('/404');
 console.log(labs)
 
-const labData = labs.data.toSorted((a, b) => {
+
+// const labData = labs.data.toSorted((a, b) => {
+//     let aTime = new Date(a.created_at).getTime();
+//     let bTime = new Date(b.created_at).getTime();
+//     return bTime - aTime;
+// }) as LabData[];
+labs.data.sort((a, b) => {
     let aTime = new Date(a.created_at).getTime();
     let bTime = new Date(b.created_at).getTime();
     return bTime - aTime;
 }) as LabData[];
+const labData = labs.data;
 // console.log(new Date(labData[0].created_at).getTime())
 ---
 
