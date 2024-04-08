@@ -48,6 +48,7 @@ const preferredName = userMeta.preferred_username;
 
 const labs = await supabase.from('document').select('*').eq('owner', user.id);
 if (labs.error) return Astro.redirect('/404');
+console.log(labs)
 
 const labData = labs.data.toSorted((a, b) => {
     let aTime = new Date(a.created_at).getTime();
