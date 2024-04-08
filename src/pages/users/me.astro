@@ -59,7 +59,7 @@ if (labs.error) return Astro.redirect('/404');
 labs.data.sort((a, b) => {
     let aTime = new Date(a.last_edited).getTime();
     let bTime = new Date(b.last_edited).getTime();
-	console.log(aTime, bTime, aTime < bTime, aTime - bTime);
+	// console.log(aTime, bTime, aTime < bTime, aTime - bTime);
     return bTime - aTime;
 }) as LabData[];
 const labData = labs.data;
